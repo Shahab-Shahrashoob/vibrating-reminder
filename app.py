@@ -1,13 +1,19 @@
 from kivy.app import App
-from kivy.uix.label import Label
 from kivy.uix.button import Button
-from kivy.uix.boxlayout import BoxLayout
+from jnius import autoclass
+
+# Access Android's Vibrator service
+Context = autoclass('android.content.Context')
+Activity = autoclass('org.kivy.android.PythonActivity').mActivity
+Vibrator = Activity.getSystemService(Context.VIBRATOR_SERVICE)
 
 class MyApp(App):
     def build(self):
-        layout = BoxLayout()
-        layout.add_widget(Label(text="Hello"))
-        layout.add_widget(Button(text="Click"))
-        return layout
+        btn = Button(text="Press to Vibrate")
+        btn.bind(on_press=self.vibrate)
+        return btn
+
+    def vibrate(self, instance):
+        Vibrator.vibrate(500)  # Vibrates for 500 milliseconds
 
 MyApp().run()
